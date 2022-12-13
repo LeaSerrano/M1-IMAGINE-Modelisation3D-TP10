@@ -885,6 +885,159 @@ void displayCylinderVolumic(Vec3 axisOrigin, Vec3 axisVector, double rayon, doub
     }
 }
 
+void display_INTERSECTION_SphereCylinder(Vec3 centreSphere, double rayonSphere, Vec3 axisOriginCylinder, Vec3 axisVectorCylinder, double rayonCylinder, double resolution) {
+    float sizeVox = 1;
+    for (int i = 1; i < resolution; i++) {
+        sizeVox = (float)sizeVox/2;
+    }
+
+    int nbPositions = pow(2, (resolution-1));
+
+    int nPosX = 0;
+    int nPosY = 0;
+    int nPosZ = 0;
+    float posVoxX;
+    float posVoxY;
+    float posVoxZ;
+
+    if(resolution == 1) {
+        if (isInACylinder(Vec3(0, 0, 0), axisVectorCylinder, axisOriginCylinder, rayonCylinder) && isInASphere(Vec3(0, 0, 0), centreSphere, rayonSphere)) {
+            drawVoxel(0, 0, 0, sizeVox);
+        }
+    }
+    else {
+        for (float i = 0; i < 0.5; i += sizeVox) {
+            posVoxX = sizeVox/2 + nPosX*sizeVox;
+            nPosY = 0;
+
+            for (float j = 0; j < 0.5; j+=sizeVox) {
+                posVoxY = sizeVox/2 + nPosY*sizeVox;
+                nPosZ = 0;
+
+                for (float k = 0; k < 0.5; k+=sizeVox) {
+                    posVoxZ = sizeVox/2 + nPosZ*sizeVox;
+
+                    if (isInACylinder(Vec3(posVoxX, posVoxY, posVoxZ), axisVectorCylinder, axisOriginCylinder, rayonCylinder) && isInASphere(Vec3(posVoxX, posVoxY, posVoxZ), centreSphere, rayonSphere)) {
+                        drawVoxel(posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, -posVoxZ, sizeVox);
+                    }
+                    nPosZ++;
+                }
+                nPosY++;
+            }
+            nPosX++;
+        }
+    }
+}
+
+void display_SOUSTRACTION_SphereCylinder(Vec3 centreSphere, double rayonSphere, Vec3 axisOriginCylinder, Vec3 axisVectorCylinder, double rayonCylinder, double resolution) {
+    float sizeVox = 1;
+    for (int i = 1; i < resolution; i++) {
+        sizeVox = (float)sizeVox/2;
+    }
+
+    int nbPositions = pow(2, (resolution-1));
+
+    int nPosX = 0;
+    int nPosY = 0;
+    int nPosZ = 0;
+    float posVoxX;
+    float posVoxY;
+    float posVoxZ;
+
+    if(resolution == 1) {
+        if (isInASphere(Vec3(0, 0, 0), centreSphere, rayonSphere) && !isInACylinder(Vec3(0, 0, 0), axisVectorCylinder, axisOriginCylinder, rayonCylinder)) {
+            drawVoxel(0, 0, 0, sizeVox);
+        }
+    }
+    else {
+        for (float i = 0; i < 0.5; i += sizeVox) {
+            posVoxX = sizeVox/2 + nPosX*sizeVox;
+            nPosY = 0;
+
+            for (float j = 0; j < 0.5; j+=sizeVox) {
+                posVoxY = sizeVox/2 + nPosY*sizeVox;
+                nPosZ = 0;
+
+                for (float k = 0; k < 0.5; k+=sizeVox) {
+                    posVoxZ = sizeVox/2 + nPosZ*sizeVox;
+
+                    if (isInASphere(Vec3(posVoxX, posVoxY, posVoxZ), centreSphere, rayonSphere) && !isInACylinder(Vec3(posVoxX, posVoxY, posVoxZ), axisVectorCylinder, axisOriginCylinder, rayonCylinder)) {
+                        drawVoxel(posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, -posVoxZ, sizeVox);
+                    }
+                    nPosZ++;
+                }
+                nPosY++;
+            }
+            nPosX++;
+        }
+    }
+}
+
+void display_UNION_SphereCylinder(Vec3 centreSphere, double rayonSphere, Vec3 axisOriginCylinder, Vec3 axisVectorCylinder, double rayonCylinder, double resolution) {
+    float sizeVox = 1;
+    for (int i = 1; i < resolution; i++) {
+        sizeVox = (float)sizeVox/2;
+    }
+
+    int nbPositions = pow(2, (resolution-1));
+
+    int nPosX = 0;
+    int nPosY = 0;
+    int nPosZ = 0;
+    float posVoxX;
+    float posVoxY;
+    float posVoxZ;
+
+    if(resolution == 1) {
+        if (isInASphere(Vec3(0, 0, 0), centreSphere, rayonSphere) || isInACylinder(Vec3(0, 0, 0), axisVectorCylinder, axisOriginCylinder, rayonCylinder)) {
+            drawVoxel(0, 0, 0, sizeVox);
+        }
+    }
+    else {
+        for (float i = 0; i < 0.5; i += sizeVox) {
+            posVoxX = sizeVox/2 + nPosX*sizeVox;
+            nPosY = 0;
+
+            for (float j = 0; j < 0.5; j+=sizeVox) {
+                posVoxY = sizeVox/2 + nPosY*sizeVox;
+                nPosZ = 0;
+
+                for (float k = 0; k < 0.5; k+=sizeVox) {
+                    posVoxZ = sizeVox/2 + nPosZ*sizeVox;
+
+                    if (isInASphere(Vec3(posVoxX, posVoxY, posVoxZ), centreSphere, rayonSphere) || isInACylinder(Vec3(posVoxX, posVoxY, posVoxZ), axisVectorCylinder, axisOriginCylinder, rayonCylinder)) {
+                        drawVoxel(posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, -posVoxZ, sizeVox);
+                    }
+                    nPosZ++;
+                }
+                nPosY++;
+            }
+            nPosX++;
+        }
+    }
+}
+
 //Draw fonction
 void draw () {
 
@@ -908,8 +1061,11 @@ void draw () {
     drawMesh(mesh, true);
 
     drawVoxelGrid();
-    //displaySphereVolumic(Vec3(0, 0, 0), 0.5, 6);
-    displayCylinderVolumic(Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    //displaySphereVolumic(Vec3(0, 0, 0), 0.25, 6);
+    //displayCylinderVolumic(Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    //display_INTERSECTION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    //display_SOUSTRACTION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    display_UNION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
 
     if(displayMode == SOLID || displayMode == LIGHTED_WIRE){
         glEnable (GL_POLYGON_OFFSET_LINE);
