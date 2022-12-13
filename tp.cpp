@@ -213,119 +213,6 @@ struct Mesh {
         computeVerticesNormals(weight_type);
     }
 
-    //on parcourt toute la forme et on garde le xmin, le ymax et le zmin : boite englobante de l'objet, en bas à gauche on aura BBMin(xmin, ymin, zmin) - (epsilon, epsilon, epsilon) (pour éviter les imprécisions) et BBMax(xmax, ymax, zmax) + (epsilon, epsilon, epsilon)
-    //simplify : on fait une grille, on prend un nb de voxels qu'on veut mettre nx*ny*nz eléments dans notre tableau (liste de représentants), on veut savoir dans quelle cellule tombe un sommet pour chaque (x, y, z) -> (i, j, k) -> liste représentants
-
-    //fonction du tp5
-   /* void calculBoiteEnglobante () {
-        float xmin, xmax, ymin, ymax, zmin, zmax, epsilon = 0.05;
-
-        xmin = FLT_MAX;
-        xmax = -FLT_MAX;
-
-        ymin = FLT_MAX;
-        ymax = -FLT_MAX;
-
-        zmin = FLT_MAX;
-        zmax = -FLT_MAX;
-
-        for (int i = 0; i < vertices.size(); i++) {
-            if (vertices[i][0] < xmin) {
-                xmin = vertices[i][0] - epsilon;
-            }
-            else if (vertices[i][0] > xmax) {
-                xmax = vertices[i][0] + epsilon;
-            }
-
-            if (vertices[i][1] < ymin) {
-                ymin = vertices[i][1] -  epsilon;
-            }
-            else if (vertices[i][1] > ymax) {
-                ymax = vertices[i][1] + epsilon;
-            }
-
-            if (vertices[i][2] < zmin) {
-                zmin = vertices[i][2] - epsilon;
-            }
-            else if (vertices[i][2] > zmax) {
-                zmax = vertices[i][2] + epsilon;
-            }
-
-        }
-
-        vecMin = Vec3(xmin, ymin, zmin);
-        vecMax = Vec3(xmax, ymax, zmax);        
-    }*/
-
-    /* int getGridIndex(Grid grid, int i, int j, int k) {
-        int gridIndex = i + j*grid.resolution/*(nx)*//* + k*grid.resolution/*(nx)*//* *grid.resolution/*(ny)*/;
-        /*return gridIndex;
-    }
-
-    int getIndex(Grid grid, float x, float y, float z) {
-        calculBoiteEnglobante();
-
-        float dx = (vecMax[0]-vecMin[0])/grid.resolution/*(nx)*//*;
-        float dy = (vecMax[1]-vecMin[1])/grid.resolution/*(ny)*//*;
-        float dz = (vecMax[2]-vecMin[2])/grid.resolution/*(nz)*//*;
-
-        int i = (int)((x-vecMin[0])/dx);
-        int j = (int)((y-vecMin[1])/dy);
-        int k = (int)((z-vecMin[2])/dz);
-
-        return this->getGridIndex(grid, i, j, k);
-    }
-
-    void simplify(Grid grid) {
-        int idG, idGV0, idGV1, idGV2;
-        std::vector<int> idViToIdg(vertices.size());
-        std::vector<Vec3> correspondanceRepresentant2(vertices.size());
-
-        std::vector< Triangle > simplifiedTriangles(triangles.size());
-        std::vector< Vec3 > simplifiedVertices(vertices.size());
-        std::vector< Vec3 > simplifiedNormals(normals.size());
-
-        for (int vi = 0; vi < vertices.size(); vi++) {
-            idG = this->getIndex(grid, vertices[vi][0], vertices[vi][1], vertices[vi][2]);
-
-            grid.representants[idG].position += vertices[vi];
-            //grid.representants[idG].normale += normals[vi];
-            grid.representants[idG].compteur++;
-
-            idViToIdg[vi] = idG;
-        }
-
-        for (int vi = 0; vi < grid.representants.size(); vi++) {
-            if (grid.representants[vi].compteur > 0) {
-                grid.representants[vi].position /= grid.representants[vi].compteur;
-                grid.representants[idG].normale /= grid.representants[idG].compteur;
-
-                //simplifiedNormals.push_back(grid.representants[vi].normale);
-                simplifiedVertices.push_back(grid.representants[vi].position);
-                grid.representants[vi].idR = simplifiedVertices.size()-1;
-            }
-        }
-
-        for (int ti = 0; ti < triangles.size(); ti++) {
-
-            idGV0 = idViToIdg[triangles[ti][0]];
-            idGV1 = idViToIdg[triangles[ti][1]];
-            idGV2 = idViToIdg[triangles[ti][2]];
-
-            if (idGV0 != idGV1 && idGV0!=idGV2 && idGV1!=idGV2) {
-                
-                int vec0 = grid.representants[idViToIdg[triangles[ti][0]]].idR;
-                int vec1 = grid.representants[idViToIdg[triangles[ti][1]]].idR;
-                int vec2 = grid.representants[idViToIdg[triangles[ti][2]]].idR;
-                
-                simplifiedTriangles.push_back(Triangle(vec0, vec1, vec2));
-            }
-        }
-
-        triangles = simplifiedTriangles;
-        vertices = simplifiedVertices;
-        //normals = simplifiedNormals;
-    }*/
 
     void displayVoxel(Vec3 centre, double length)  {
         float xmin, xmax, ymin, ymax, zmin, zmax;
@@ -341,15 +228,22 @@ struct Mesh {
         vecMin = Vec3(xmin, ymin, zmin);
         vecMax = Vec3(xmax, ymax, zmax);
     }
+    
+    float getxMax() {
+        return vecMax[0];
+    }
 
-    /*void displaySphereVolumic(Vec3 centre, double rayon, double resolution) {
-        float sizeVox = 2*rayon/resolution;
+    float getyMax() {
+        return vecMax[1];
+    }
 
-        for (int i = 0; i < resolution; i++) {
-            
-        }
-    }*/
-   
+    float getzMax() {
+        return vecMax[2];
+    }
+
+    float getxMin() {
+        return vecMin[0];
+    }
 
 };
 
@@ -818,8 +712,8 @@ void drawVoxelGrid() {
         drawVector(Max4, Max1);
 }
 
-void drawVoxel() {
-    mesh.displayVoxel(Vec3(0, 0, 0), 0.25);
+void drawVoxel(float x, float y, float z, float sizeVoxel) {
+    mesh.displayVoxel(Vec3(x, y, z), sizeVoxel);
 
     Vec3 Min1, Min2, Min3, Min4, Max1, Max2, Max3, Max4;
         Min1 = Vec3(mesh.vecMin[0], mesh.vecMin[1], mesh.vecMin[2]);
@@ -865,6 +759,132 @@ void drawVoxel() {
         glEnd();
 }
 
+bool isInASphere(Vec3 point, Vec3 centre, double rayon) {
+    if (pow(point[0]-centre[0], 2) + pow(point[1]-centre[1], 2) + pow(point[2]-centre[2], 2) < pow(rayon, 2)) {
+        return true;
+    }
+
+    return false;
+}
+
+void displaySphereVolumic(Vec3 centre, double rayon, double resolution) {
+    float sizeVox = 1;
+    for (int i = 1; i < resolution; i++) {
+        sizeVox = (float)sizeVox/2;
+    }
+
+    int nbPositions = pow(2, (resolution-1));
+
+    int nPosX = 0;
+    int nPosY = 0;
+    int nPosZ = 0;
+    float posVoxX;
+    float posVoxY;
+    float posVoxZ;
+
+    if(resolution == 1) {
+        if (isInASphere(Vec3(0, 0, 0), centre, rayon)) {
+            drawVoxel(0, 0, 0, sizeVox);
+        }
+    }
+    else {
+        for (float i = 0; i < 0.5; i += sizeVox) {
+            posVoxX = sizeVox/2 + nPosX*sizeVox;
+            nPosY = 0;
+
+            for (float j = 0; j < 0.5; j+=sizeVox) {
+                posVoxY = sizeVox/2 + nPosY*sizeVox;
+                nPosZ = 0;
+
+                for (float k = 0; k < 0.5; k+=sizeVox) {
+                    posVoxZ = sizeVox/2 + nPosZ*sizeVox;
+
+                    if (isInASphere(Vec3(posVoxX, posVoxY, posVoxZ), centre, rayon)) {
+                        drawVoxel(posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, -posVoxZ, sizeVox);
+                    }
+                    nPosZ++;
+                }
+                nPosY++;
+            }
+            nPosX++;
+        }
+    }
+
+}
+
+bool isInACylinder(Vec3 point, Vec3 axisVector, Vec3 axisOrigin, float rayon) {
+    Vec3 axisUp = axisOrigin + axisVector;
+    float c = rayon * axisVector.length();
+
+    float conditionToCheck1 = Vec3::dot(point - axisOrigin, axisVector);
+    float conditionToCheck2 = Vec3::dot(point - axisUp, axisVector);
+    float conditionToCheck3 = (Vec3::cross(point - axisOrigin, axisVector)).length();
+
+    if (conditionToCheck1 >= 0 && conditionToCheck2 <= 0 && conditionToCheck3 <= rayon) {
+        return true;
+    }
+    return false;
+
+}
+
+void displayCylinderVolumic(Vec3 axisOrigin, Vec3 axisVector, double rayon, double resolution) {
+    float sizeVox = 1;
+    for (int i = 1; i < resolution; i++) {
+        sizeVox = (float)sizeVox/2;
+    }
+
+    int nbPositions = pow(2, (resolution-1));
+
+    int nPosX = 0;
+    int nPosY = 0;
+    int nPosZ = 0;
+    float posVoxX;
+    float posVoxY;
+    float posVoxZ;
+
+    if(resolution == 1) {
+        if (isInACylinder(Vec3(0, 0, 0), axisVector, axisOrigin, rayon)) {
+            drawVoxel(0, 0, 0, sizeVox);
+        }
+    }
+    else {
+        for (float i = 0; i < 0.5; i += sizeVox) {
+            posVoxX = sizeVox/2 + nPosX*sizeVox;
+            nPosY = 0;
+
+            for (float j = 0; j < 0.5; j+=sizeVox) {
+                posVoxY = sizeVox/2 + nPosY*sizeVox;
+                nPosZ = 0;
+
+                for (float k = 0; k < 0.5; k+=sizeVox) {
+                    posVoxZ = sizeVox/2 + nPosZ*sizeVox;
+
+                    if (isInACylinder(Vec3(posVoxX, posVoxY, posVoxZ), axisVector, axisOrigin, rayon)) {
+                        drawVoxel(posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(posVoxX, -posVoxY, -posVoxZ, sizeVox);
+                        drawVoxel(-posVoxX, posVoxY, -posVoxZ, sizeVox);
+                    }
+                    nPosZ++;
+                }
+                nPosY++;
+            }
+            nPosX++;
+        }
+    }
+}
+
 //Draw fonction
 void draw () {
 
@@ -888,7 +908,8 @@ void draw () {
     drawMesh(mesh, true);
 
     drawVoxelGrid();
-    drawVoxel();
+    //displaySphereVolumic(Vec3(0, 0, 0), 0.5, 6);
+    displayCylinderVolumic(Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
 
     if(displayMode == SOLID || displayMode == LIGHTED_WIRE){
         glEnable (GL_POLYGON_OFFSET_LINE);
