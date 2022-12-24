@@ -1061,9 +1061,19 @@ void draw () {
     drawMesh(mesh, true);
 
     drawVoxelGrid();
+    //Ex1
+    //drawVoxel(0, 0, 0, 1);
+    //drawVoxel(-0.25, 0, 0, 0.25);
+
+    //Ex2
     //displaySphereVolumic(Vec3(0, 0, 0), 0.25, 6);
-    //displayCylinderVolumic(Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    //displaySphereVolumic(Vec3(0, 0, 0), 0.5, 3);
+    //displayCylinderVolumic(Vec3(0, 0, 0), Vec3(1, 0, 0), 0.25, 5);
+    //displayCylinderVolumic(Vec3(0, 0, 0), Vec3(0, 1, 0), 0.5, 8);
+
+    //Ex3
     //display_INTERSECTION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
+    //display_INTERSECTION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 8);
     //display_SOUSTRACTION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
     display_UNION_SphereCylinder(Vec3(0, 0, 0), 0.5, Vec3(0, 0, 0), Vec3(0, 1, 0), 0.25, 6);
 
